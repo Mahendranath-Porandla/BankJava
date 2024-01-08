@@ -22,17 +22,26 @@ public class BankAccount {
         obj.writeToCsv(acctNo,name,bal);
 
     }
-    void getDetails(){
-        System.out.println("Enter the account number: ");
-        long acctNo=in.nextLong();
+    void getDetails(long acctNo){
+//        System.out.println("Enter the account number: ");
+//        long acctNo=in.nextLong();
         try{
-            validateAccountNumber(acctNo);
+            boolean flag = validateAccountNumber(acctNo);
+            if(flag){
+                String str = obj.readFromCsv(acctNo);
+        if(str.equals("false")){
+            System.out.println("account does not exist");
+        }
+        String[] customer=str.split(",");
+        System.out.println("Account Number: "+customer[0]+" Name: "+customer[1]+" Balance: "+customer[2]);
+            }
 
         }
         catch (Exception e){
             System.out.println( e.getMessage());
 
         }
+
 
 
 //        try {
@@ -43,12 +52,42 @@ public class BankAccount {
 
 
     }
-    void validateAccountNumber(long acctNo) throws Exception {
-        String acctNoStr=Long.toString(acctNo);
-        if(acctNoStr==null||acctNoStr.length()!=12|| !acctNoStr.matches("\\d+")){
-            throw new Exception("Invalid input. Please enter a 12-digit number.");
+    void deposit(long acctNo,double depositAmount){
+        try{
+            boolean flag = validateAccountNumber(acctNo);
+            if(flag){
+                String str = obj.readFromCsv(acctNo);
+                if(str.equals("false")){
+                    System.out.println("account does not exist");
+                }
+                String[] customer=str.split(",");
+               // System.out.println("Account Number: "+customer[0]+" Name: "+customer[1]+" Balance: "+customer[2]);
+                obj.updateCsv(acctNo,customer[1],(Double.parseDouble(customer[2])+depositAmount));
+                getDetails(acctNo);
+            }
+
         }
-        obj.readFromCsv(acctNo);
+        catch (Exception e){
+            System.out.println( e.getMessage());
+
+        }
+
+
+    }
+    boolean validateAccountNumber(long acctNo) throws Exception {
+        String acctNoStr=Long.toString(acctNo);
+        if(acctNoStr==null||acctNoStr.length()!=13|| !acctNoStr.matches("\\d+")){
+            throw new Exception("Invalid input. Please enter a 12-digit number.");
+
+        }
+        return true;
+//        String str = obj.readFromCsv(acctNo);
+//        if(str.equals("false")){
+//            System.out.println("account does not exist");
+//        }
+//        String[] customer=str.split(",");
+//        System.out.println("Account Number: "+customer[0]+" Name: "+customer[1]+" Balance: "+customer[2]);
+
 
     }
 
